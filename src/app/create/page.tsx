@@ -117,6 +117,8 @@ export default function CreateCommitment() {
     if (!canTransitionSubmitStatus(submitStatusRef.current, next)) return false;
     submitStatusRef.current = next;
     setSubmitStatus(next);
+    // Keep isSubmitting in sync with the submitStatus state machine.
+    setIsSubmitting(next === 'submitting');
     return true;
   };
 
@@ -162,7 +164,10 @@ export default function CreateCommitment() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('startTour') === 'true') {
         startTour();
-        const cleanUrl = window.location.pathname;
+        params.delete('startTour');
+        const cleanUrl = params.toString()
+          ? `${window.location.pathname}?${params.toString()}`
+          : window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
       }
     }
