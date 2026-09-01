@@ -132,12 +132,15 @@ export default function CreateCommitment() {
     wasSubmittingRef.current = isSubmitting && submitStatus === 'submitting';
   }, [isSubmitting, submitStatus]);
 
+  // Only prompt to resume a draft that existed when the wizard first mounted.
+  // Saving progress during the current session should not re-trigger the prompt.
+  const initialDraftRef = useRef(draft);
   useEffect(() => {
-    if (draft) {
+    if (initialDraftRef.current) {
       suppressDraftSave.current = true;
       setShowResumePrompt(true);
     }
-  }, [draft]);
+  }, []);
 
   // Clear the draft after a successful submission to prevent stale/duplicate commitments.
   useEffect(() => {
