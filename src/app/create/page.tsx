@@ -33,11 +33,11 @@ const SUBMIT_TRANSITIONS: Record<SubmitStatus, ReadonlyArray<SubmitStatus>> = {
   error: ['submitting', 'idle'],
 };
 
-function canTransitionSubmitStatus(from: SubmitStatus, to: SubmitStatus): boolean {
+export function canTransitionSubmitStatus(from: SubmitStatus, to: SubmitStatus): boolean {
   return SUBMIT_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
-const VALIDATION = {
+export const VALIDATION = {
   DURATION_MIN: 1,
   DURATION_MAX: 365,
   MAX_LOSS_MIN: 0,
@@ -138,6 +138,13 @@ export default function CreateCommitment() {
       setShowResumePrompt(true);
     }
   }, [draft]);
+
+  // Clear the draft after a successful submission to prevent stale/duplicate commitments.
+  useEffect(() => {
+    if (showSuccessModal) {
+      clearDraft();
+    }
+  }, [showSuccessModal, clearDraft]);
 
   // When a source commitment is loaded via ?sourceId=, prefill the wizard fields
   // and skip straight to step 2 so the user can review / adjust the copied parameters.
