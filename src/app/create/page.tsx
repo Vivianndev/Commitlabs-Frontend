@@ -341,7 +341,9 @@ export default function CreateCommitment() {
       return;
     }
     if (showResumePrompt) {
-      setSubmitError('Resume or discard your existing draft before creating a new commitment.');
+      setSubmitError('Please resume or discard the existing draft before creating a new commitment.');
+      return;
+    }Error('Resume or discard your existing draft before creating a new commitment.');
       updateSubmitStatus('error');
       return;
     }
