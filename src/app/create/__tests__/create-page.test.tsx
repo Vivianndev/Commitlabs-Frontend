@@ -29,7 +29,7 @@ const complete = () => {
 };
 describe('Create page', () => {
   it('shows resume prompt when draft exists', () => {
-    mockLoad.mockReturnValue({ title: 'T', description: 'D', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
+    mockLoad.mockReturnValue({ title: 'T', description: 'D', frequency: 'daily', startDate: '2025-01-01', lastUpdated: Date.now() });
     render(<Page />);
     expect(screen.getByRole('button', { name: /resume draft/i })).toBeInTheDocument();
   });
@@ -38,13 +38,13 @@ describe('Create page', () => {
     expect(screen.queryByRole('button', { name: /resume draft/i })).not.toBeInTheDocument();
   });
   it('resume populates form', () => {
-    mockLoad.mockReturnValue({ title: 'Run', description: '5km', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
+    mockLoad.mockReturnValue({ title: 'Run', description: '5km', frequency: 'daily', startDate: '2025-01-01', lastUpdated: Date.now() });
     render(<Page />);
     fireEvent.click(screen.getByRole('button', { name: /resume draft/i }));
     expect(screen.getByLabelText('Title')).toHaveValue('Run');
   });
   it('start over clears draft', () => {
-    mockLoad.mockReturnValue({ title: 'Old', description: '', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
+    mockLoad.mockReturnValue({ title: 'Old', description: '', frequency: 'daily', startDate: '2025-01-01', lastUpdated: Date.now() });
     render(<Page />);
     fireEvent.click(screen.getByRole('button', { name: /start over/i }));
     expect(mockClear).toHaveBeenCalled();
