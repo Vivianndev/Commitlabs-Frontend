@@ -29,7 +29,7 @@ type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error';
 const SUBMIT_TRANSITIONS: Record<SubmitStatus, ReadonlyArray<SubmitStatus>> = {
   idle: ['submitting', 'error'],
   submitting: ['success', 'error', 'idle'],
-  success: ['idle'],
+  success: [],
   error: ['submitting', 'idle'],
 };
 
