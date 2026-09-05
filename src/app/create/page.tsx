@@ -63,6 +63,8 @@ export default function CreateCommitment() {
   const [step, setStep] = useState(1);
   const [initialFocusField, setInitialFocusField] = useState<string | null>(null);
   const walletAddress = ownerAddress;
+  const [selectedType, setSelectedType] = useState<CommitmentType | null>(null);
+  const [commitmentType, setCommitmentType] = useState<CommitmentType>('balanced');
 
   const {
     isActive: tourActive,
@@ -79,12 +81,11 @@ export default function CreateCommitment() {
     walletAddress,
     onSelectDefaultType: () => {
       if (!selectedType) {
-        handleSelectType('balanced');
+        setSelectedType('balanced');
+        setCommitmentType('balanced');
       }
     },
   });
-  const [selectedType, setSelectedType] = useState<CommitmentType | null>(null);
-  const [commitmentType, setCommitmentType] = useState<CommitmentType>('balanced');
   const [amount, setAmount] = useState<string>('');
   const [asset, setAsset] = useState<string>('XLM');
   const [durationDays, setDurationDays] = useState<number>(90);
@@ -254,8 +255,8 @@ export default function CreateCommitment() {
       asset,
       durationDays,
       maxLossPercent,
-      earlyExitPenalty,
-      estimatedFees,
+      earlyExitPenalty: `${((Number(amount) || 0) * (commitmentType === 'aggressive' ? 5 : commitmentType === 'balanced' ? 3 : 2)) / 100} ${asset}`,
+      estimatedFees: `0.00 ${asset}`,
       estimatedYield: yieldMap[selectedType ?? 'balanced'] ?? '—',
       commitmentStart: 'Immediately',
       commitmentEnd: end.toLocaleDateString(),
