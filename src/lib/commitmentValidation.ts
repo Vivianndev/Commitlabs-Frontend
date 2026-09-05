@@ -1,16 +1,5 @@
-export interface CommitmentDraftInput {
-  title?: string;
-  description?: string;
-  frequency?: string;
-  startDate?: string;
-  amount?: string | number;
-}
-
-export interface ValidationResult {
-  valid: boolean;
-  errors: Record<string, string>;
-}
-
+export interface CommitmentDraftInput { title?: string; description?: string; frequency?: string; startDate?: string; amount?: string | number; }
+export interface ValidationResult { valid: boolean; errors: Record<string, string>; }
 export function validateCommitmentDraft(input: CommitmentDraftInput): ValidationResult {
   const errors: Record<string, string> = {};
   const title = (input.title ?? '').trim();
@@ -27,7 +16,7 @@ export function validateCommitmentDraft(input: CommitmentDraftInput): Validation
   if (!startDate) { errors.startDate = 'Start date is required.'; }
   else if (isNaN(Date.parse(startDate))) { errors.startDate = 'Start date must be valid.'; }
 
-  if (amount !== undefined || amount !== '') {
+  if (amount !== undefined && amount !== '') {
     const numericAmount = Number(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) { errors.amount = 'Amount must be positive.'; }
   }
