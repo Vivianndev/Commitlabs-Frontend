@@ -8,7 +8,7 @@ const mockSave = saveDraft as jest.Mock;
 const mockClear = clearDraft as jest.Mock;
 let mockFetch = jest.fn();
 beforeEach(() => {
-  jSt.clearAllMocks();
+  jest.clearAllMocks();
   mockLoad.mockReturnValue(null);
   mockSave.mockImplementation(() => {});
   mockClear.mockImplementation(() => {});
@@ -16,32 +16,32 @@ beforeEach(() => {
   (global as any).fetch = mockFetch;
 });
 const fillTitle = () => {
-  fireEvent.change(screen.getLabelText('Title'), { target: { value: 'Read daily' } });
-  fireEvent.change(screen.getLabelText('Description'), { target: { value: 'Read 30min' } });
+  fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Read daily' } });
+  fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Read 30min' } });
   fireEvent.click(screen.getByRole('button', { name: /next/i }));
 };
 const complete = () => {
   render(<Page />);
   fillTitle();
-  fireEvent.change(screen.getLabelText('Start date'), { target: { value: '2025-03-01' } });
-  fireEvent.change(screen.getLabelText('Frequency'), { target: { value: 'daily' } });
+  fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2025-03-01' } });
+  fireEvent.change(screen.getByLabelText('Frequency'), { target: { value: 'daily' } });
   fireEvent.click(screen.getByRole('button', { name: /create commitment/i }));
 };
 describe('Create page', () => {
   it('shows resume prompt when draft exists', () => {
     mockLoad.mockReturnValue({ title: 'T', description: 'D', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
     render(<Page />);
-    expect(screen.getByRole('button', { name: /resume draft/i })).toBeInDocument();
+    expect(screen.getByRole('button', { name: /resume draft/i })).toBeInTheDocument();
   });
   it('no prompt when no draft', () => {
     render(<Page />);
-    expect(screen.queryByRole('button', { name: /resume draft/i })).notToBeInDocument();
+    expect(screen.queryByRole('button', { name: /resume draft/i })).not.toBeInTheDocument();
   });
   it('resume populates form', () => {
     mockLoad.mockReturnValue({ title: 'Run', description: '5km', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
     render(<Page />);
     fireEvent.click(screen.getByRole('button', { name: /resume draft/i }));
-    expect(screen.getLabelText('Title')).toHaveValue('Run');
+    expect(screen.getByLabelText('Title')).toHaveValue('Run');
   });
   it('start over clears draft', () => {
     mockLoad.mockReturnValue({ title: 'Old', description: '', frequency: 'daily', startDate: '2025-01-01', lastUpdated: 1 });
@@ -56,8 +56,8 @@ describe('Create page', () => {
   });
   it('saves draft on next valid', () => {
     render(<Page />);
-    fireEvent.change(screen.getLabelText('Title'), { target: { value: 'Valid title' } });
-    fireEvent.change(screen.getLabelText('Description'), { target: { value: 'desc' } });
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Valid title' } });
+    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'desc' } });
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(mockSave).toHaveBeenCalledWith(expect.objectContaining({ title: 'Valid title' }));
   });
@@ -66,11 +66,11 @@ describe('Create page', () => {
     complete();
     expect(screen.getByRole('button', { name: /creating\\.\\.\\./i })).toBeDisabled();
     await screen.findByRole('status');
-    expect(screen.getText(/commitment was created successfully/i)).toBeInDocument();
+    expect(screen.getByText(/commitment was created successfully/i)).toBeInTheDocument();
     expect(mockClear).toHaveBeenCalled();
   });
   it('shows error and retry', async () => {
-    mockFetch.mockRejectedOnce(new Error('net')).mockResolvedOnce({ ok: true });
+    mockFetch.mockRejectedValueOnce(new Error('net')).mockResolvedValueOnce({ ok: true });
     complete();
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent(/failed to create commitment/i);
@@ -78,7 +78,7 @@ describe('Create page', () => {
     await screen.findByRole('status');
   });
   it('shows permission error', async () => {
-    mockFetch.mockResolvedOnce({ ok: false, status: 403 });
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 403 });
     complete();
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent(/permission/i);
