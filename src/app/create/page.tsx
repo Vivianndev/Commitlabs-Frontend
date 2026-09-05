@@ -219,7 +219,7 @@ export default function CreateCommitment() {
     if (suppressDraftSave.current || showSuccessModal || isSubmitting) {
       return;
     }
-    if (step === 1 && !selectedType) {
+    if (!selectedType) {
       return;
     }
     const currentDraft: DraftState = {
